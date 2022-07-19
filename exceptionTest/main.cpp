@@ -2,6 +2,11 @@
 #include <vector>
 using namespace std;
 
+void test()
+{
+
+}
+
 int main()
 {
     
