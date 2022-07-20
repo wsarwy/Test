@@ -22,7 +22,10 @@ private:
 
     sockaddr_in mAddr;
 
-    char resp[1024] = {0};
+    char resp[1024] = {0};//发送的消息
+
+signals:
+    void updateMsg(QString msg);
 };
 
 #endif // MSGTHREAD_H

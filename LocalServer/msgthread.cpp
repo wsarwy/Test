@@ -20,15 +20,29 @@ MsgThread::~MsgThread()
 
 void MsgThread::run()
 {
-    char* clientIp = inet_ntoa(mAddr.sin_addr);
+    char* clientIP = inet_ntoa(mAddr.sin_addr);
     int clientPort = ntohs(mAddr.sin_port);
 
     while (true) {
         memset(resp, 0, 1024);
         char buf[1024] = {0};
-        int ret = recv(mClient, buf, 1024,0);//
+        int ret = recv(mClient, buf, 1024,0);//等待客户端传输的消息
         QString time = QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
+        if(ret == 0){
+            //连接断开
+            break;
+        }
 
+        QString msg = QString("%1 [%2:%3]:%4").arg(time).arg(clientIP).arg(clientPort).arg(buf);
+        emit updateMsg(msg);
+
+        const char* log = "msg is dealed by server";
+
+        QString retMsg = msg + log;
+
+        strcpy(resp, retMsg.toUtf8().data());
+
+        send(mClient, resp, strlen(resp) +1 ,0);
 
 
     }
