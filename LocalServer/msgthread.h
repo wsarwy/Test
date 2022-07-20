@@ -3,6 +3,7 @@
 
 #include <QThread>
 #include <winsock2.h>
+#include <WS2tcpip.h>
 #include <QDateTime>
 #include <QDebug>
 #include <QMainWindow>

@@ -23,6 +23,10 @@ private:
     SOCKET mListen;
     QMainWindow* parent;
 
+signals:
+    void isMSg(QString msg);
+    void isClose();
+
 
 };
 

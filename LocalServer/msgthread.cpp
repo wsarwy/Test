@@ -20,7 +20,10 @@ MsgThread::~MsgThread()
 
 void MsgThread::run()
 {
-    char* clientIP = inet_ntoa(mAddr.sin_addr);
+    //char* clientIP = inet_ntop(mAddr.sin_addr);
+    char clientIP[17];
+    inet_ntop(AF_INET, (const void*)&mAddr.sin_addr, clientIP, 17);
+
     int clientPort = ntohs(mAddr.sin_port);
 
     while (true) {
