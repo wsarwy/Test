@@ -25,7 +25,7 @@ HEADERS += \
 FORMS += \
     mainwindow.ui
 
-LIBS += -lpthread libwsock32 libws2_32
+#LIBS += -lpthread libwsock32 libws2_32
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

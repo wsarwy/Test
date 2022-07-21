@@ -7,18 +7,26 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     WSAStartup(MAKEWORD(2,2), &mWsaData);
+
+    connect(ui->start, &QPushButton::clicked, this, &MainWindow::slot_start);
+    connect(ui->close, &QPushButton::clicked, this, &MainWindow::slot_close);
+    connect(ui->clear, &QPushButton::clicked, this, &MainWindow::slot_clearAll);
+
 }
 
 MainWindow::~MainWindow()
 {
+    closesocket(mListen);
+    WSACleanup();
     delete ui;
 }
 
 
-void MainWindow::on_startServer_clicked()
+void MainWindow::slot_start()
 {
     if(mListen != INVALID_SOCKET)
     {
+        qDebug()<<"listen socket already is established";
         return;
     }
 
@@ -36,13 +44,17 @@ void MainWindow::on_startServer_clicked()
     }
 
     //建立监听socket
-    mListen = socket(AF_UNIX, SOCK_STREAM, 0);
+    mListen = socket(AF_INET, SOCK_STREAM, 0);
     int error;
-    if(mListen != INVALID_SOCKET)
+
+    if(mListen == INVALID_SOCKET)
     {
         error = WSAGetLastError();
         qDebug()<< " socket error: "<<error;
         return;
+    }else
+    {
+        qDebug()<<"listen socket established";
     }
 
     //设置套接字的地址信息
@@ -58,6 +70,9 @@ void MainWindow::on_startServer_clicked()
         error = WSAGetLastError();
         qDebug()<< "bind error: "<< error;
         return;
+    }else
+    {
+        qDebug()<<"listen socket binded success";
     }
 
     //将监听socket设置为活动状态
@@ -67,6 +82,9 @@ void MainWindow::on_startServer_clicked()
         error = WSAGetLastError();
         qDebug()<<"listen error: "<< error;
         return;
+    }else
+    {
+        qDebug()<<"listen socket actived";
     }
 
     qDebug()<<"server startup success";
@@ -76,17 +94,29 @@ void MainWindow::on_startServer_clicked()
     mSocketThread = new SocketThread(mListen);
     mSocketThread->start();
 
-}
-
-
-void MainWindow::on_closeServer_clicked()
-{
+    connect(mSocketThread, &SocketThread::isMSg, this, [=](QString msg){
+        ui->textEdit->setText(msg);
+    });
 
 }
 
 
-void MainWindow::on_clearAll_clicked()
+void MainWindow::slot_close()
 {
+    if(mSocketThread != nullptr)
+    {
+        mSocketThread->requestInterruption();
+        mSocketThread->terminate();
 
+        mSocketThread->quit();
+        mSocketThread->wait();
+        delete mSocketThread;
+    }
+}
+
+
+void MainWindow::slot_clearAll()
+{
+    ui->textEdit->clear();
 }
 

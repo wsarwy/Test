@@ -27,6 +27,10 @@ void SocketThread::run()
 
         //调用accpet函数将socket启用,将返回一个与客户端连接的connect socket
         SOCKET connectionSocket = ::accept(mListen, (sockaddr*)&mClientAddr, &size);
+        if(connectionSocket != INVALID_SOCKET)
+        {
+            qDebug()<<"connection socket is established";
+        }
 
         //读取客户端的IP信息
         char clientIP[17];
@@ -43,13 +47,16 @@ void SocketThread::run()
         MsgThread* msgthread = new MsgThread(connectionSocket, mClientAddr, parent);
         msgthread->start();
 
+        connect(msgthread, &MsgThread::updateMsg, this, [=](QString msg)
+        {
+            emit isMSg(msg);
+        });
+
         connect(this, &SocketThread::isClose, this, [=](){
             msgthread->terminate();
             msgthread->quit();
             delete msgthread;
         });
-
-
 
     }
 

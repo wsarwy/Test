@@ -8,7 +8,7 @@
 #include <QDebug>
 #include <QRegExpValidator>
 
-
+#pragma comment(lib,"ws2_32.lib")
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,11 +23,11 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_startServer_clicked();
+    void slot_start();
 
-    void on_closeServer_clicked();
+    void slot_close();
 
-    void on_clearAll_clicked();
+    void slot_clearAll();
 
 private:
     Ui::MainWindow *ui;

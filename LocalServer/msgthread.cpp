@@ -32,7 +32,7 @@ void MsgThread::run()
         int ret = recv(mClient, buf, 1024,0);//等待客户端传输的消息
         QString time = QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
         if(ret == 0){
-            //连接断开
+            qDebug()<<"client not return effective data";
             break;
         }
 
@@ -46,7 +46,6 @@ void MsgThread::run()
         strcpy(resp, retMsg.toUtf8().data());
 
         send(mClient, resp, strlen(resp) +1 ,0);
-
 
     }
 
